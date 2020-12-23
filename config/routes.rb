@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
-  resources :images
-  resources :likes
-  resources :users
-  resources :apartments
-  resources :neighborhoods
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+
+  get '/neighborhoods', to: 'neighborhoods#index'
+  get 'neighborhoods/details', to: 'neighborhoods#details'
+
 end
