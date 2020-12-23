@@ -37,17 +37,18 @@ links.each_with_index do |link, i|
     # get HTML from page after all clicks
     current_doc = Nokogiri::HTML.parse(browser.html)
 
-    price = current_doc.css('span.price').text
-    neighborhood = current_doc.at_css('small').text.strip
+    
 
     sq_ft_span = current_doc.at_css('p.attrgroup').children[3]
 
+    #  ~~ ALL VARIABLES DEFINED BELOW ~~ #
     if sq_ft_span && integers[sq_ft_span.text[0].to_sym]
         sq_feet = sq_ft_span.text
     else
         sq_feet = nil
     end
-
+    price = current_doc.css('span.price').text
+    neighborhood = current_doc.at_css('small').text.strip
     bed = current_doc.css('span.shared-line-bubble').children[0].text[0].to_i
     bath = current_doc.css('span.shared-line-bubble').children[2].text[0].to_i
     title = current_doc.css('span#titletextonly').text
@@ -62,16 +63,18 @@ links.each_with_index do |link, i|
         arr << el['srcset']
     end
 
-    link_array << { 
-        images: arr,
-        neighborhood: neighborhood,
-        price: price,
-        square_feet: sq_feet,
-        bed: bed,
-        bath: bath,
-        title: title,
-        description: description
-    }
+    # link_array << { 
+    #     images: arr,
+    #     neighborhood: neighborhood,
+    #     price: price,
+    #     square_feet: sq_feet,
+    #     bed: bed,
+    #     bath: bath,
+    #     title: title,
+    #     description: description
+    # }
+
+    neighborhood = Neighborhood.find_or_create_by(name: neighborhood)
 
 end
 

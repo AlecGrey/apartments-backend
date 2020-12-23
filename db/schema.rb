@@ -18,8 +18,7 @@ ActiveRecord::Schema.define(version: 2020_12_23_004055) do
   create_table "apartments", force: :cascade do |t|
     t.bigint "neighborhood_id", null: false
     t.integer "price"
-    t.string "square_feet"
-    t.string "integer"
+    t.integer "square_feet"
     t.integer "bedrooms"
     t.integer "bathrooms"
     t.string "title"
