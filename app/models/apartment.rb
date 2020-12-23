@@ -1,4 +1,4 @@
 class Apartment < ApplicationRecord
-  belongs_to :neighborhood, dependent: :destroy
+  belongs_to :neighborhood
   has_many :images
 end

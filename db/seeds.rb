@@ -10,6 +10,10 @@ require 'open-uri'
 require 'pry'
 require 'watir'
 
+Image.destroy_all
+Apartment.destroy_all
+Neighborhood.destroy_all
+
 doc = Nokogiri::HTML(open('https://sfbay.craigslist.org/search/sfc/apa?hasPic=1&bundleDuplicates=1&availabilityMode=0&sale_date=all+dates'))
 # find the item links!
 listitems = doc.css('li.result-row')
@@ -43,11 +47,12 @@ links.each_with_index do |link, i|
 
     #  ~~ ALL VARIABLES DEFINED BELOW ~~ #
     if sq_ft_span && integers[sq_ft_span.text[0].to_sym]
-        sq_feet = sq_ft_span.text
+        sq_feet = sq_ft_span.text.split('ft')[0]
     else
         sq_feet = nil
     end
-    price = current_doc.css('span.price').text
+    
+    price = current_doc.css('span.price').text.sub('$', '').sub(',', '').to_i
     neighborhood = current_doc.at_css('small').text.strip
     bed = current_doc.css('span.shared-line-bubble').children[0].text[0].to_i
     bath = current_doc.css('span.shared-line-bubble').children[2].text[0].to_i
@@ -74,8 +79,17 @@ links.each_with_index do |link, i|
     #     description: description
     # }
 
-    neighborhood = Neighborhood.find_or_create_by(name: neighborhood)
+    neighborhood = Neighborhood.find_or_create_by(name: neighborhood[1, neighborhood.length - 2])
+    apartment = Apartment.create(
+        price: price,
+        square_feet: sq_feet,
+        bedrooms: bed,
+        bathrooms: bath,
+        title: title,
+        description: description
+    )
+    arr.each { |image_url| apartment.images << Image.create( url: image_url ) }
+
+    neighborhood.apartments << apartment
 
 end
-
-Pry.start
