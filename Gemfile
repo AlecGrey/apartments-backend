@@ -56,3 +56,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # for scraping
 gem 'pry-rails'
 gem 'watir'
+gem "rack-cors", "~> 1.1"
