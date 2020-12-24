@@ -59,3 +59,5 @@ gem 'watir'
 gem "rack-cors", "~> 1.1"
 
 gem "jsonapi-serializer", "~> 2.1"
+
+gem "jwt", "~> 2.2"
