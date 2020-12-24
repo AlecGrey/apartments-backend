@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-
+  # ~~ NEIGHBORHOODS ~~ #
   get '/neighborhoods', to: 'neighborhoods#index'
   get 'neighborhoods/details', to: 'neighborhoods#details'
+  # ~~ USER LOGIN/SIGNUP ~~ #
+  post '/signup', to: 'users#create'
+  post '/login', to: 'users#login'
 
 end
