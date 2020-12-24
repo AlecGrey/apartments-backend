@@ -1,33 +1,23 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
 require 'nokogiri'
 require 'open-uri'
 require 'pry'
 require 'watir'
-
 # Quick integer lookup dictionary
 integers = {'0': true, '1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9':true }
 
-# Empty DB to start
+# Empty DB - comment out if adding multiple pages to DB!
 Image.destroy_all
 Apartment.destroy_all
 Neighborhood.destroy_all
 
-# Use nokogiri to scrape links to listing show pages (~120 links per page)
+# Use nokogiri to scrape links to listing SHOW pages (~120 links per page)
 doc = Nokogiri::HTML(open('https://sfbay.craigslist.org/search/sfc/apa?hasPic=1&bundleDuplicates=1&availabilityMode=0&sale_date=all+dates'))
 listitems = doc.css('li.result-row')
 ri = listitems.css('.result-image')
 arr = ri.css('a')
 links = arr.map { |item| item['href'] }
-
 # open browser instance
 browser = Watir::Browser.new(:chrome)
-
 # Iterate over each link: visit the page and scrape data to DB
 links.each_with_index do |link, i|
     # navigate to the link
