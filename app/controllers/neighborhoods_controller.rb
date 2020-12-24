@@ -48,7 +48,8 @@ class NeighborhoodsController < ApplicationController
     end
 
     def render_neighborhoods_with_serializer
-        # faster return than above render json, less intuitive data structure
-        render json: NeighborhoodSerializer.new(all_queried_neighborhoods).serializable_hash.to_json
+        # doesn't render the apartment details & less intuitive file structure
+        # revisit/refactor later
+        render json: NeighborhoodSerializer.new(all_queried_neighborhoods).serializable_hash
     end
 end
