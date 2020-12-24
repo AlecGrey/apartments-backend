@@ -1,11 +1,11 @@
 class NeighborhoodsController < ApplicationController
 
     def index
-        render_neighborhood
+        render_neighborhoods
     end
 
     def details
-        render_neighborhood_details
+        render_all_neighborhoods_details
     end
 
     private
@@ -23,14 +23,16 @@ class NeighborhoodsController < ApplicationController
     end
 
     def all_queried_neighborhoods
+        # if we receive params from request, only include those neighborhoods, otherwise grab all neighborhoods
         params['ids'] ? filtered_neighborhoods : all_neighborhoods
     end
 
-    def render_neighborhood_details
+    def render_all_neighborhoods_details
         render json: all_neighborhoods, except: [:created_at, :updated_at]
     end
 
-    def render_neighborhood
+    def render_neighborhoods
+        # intuitive data structure, slower load time than serialized json
         render json: all_queried_neighborhoods, 
             except: [:created_at, :updated_at],
             include: { 
@@ -43,5 +45,10 @@ class NeighborhoodsController < ApplicationController
                     }
                 }
             }
+    end
+
+    def render_neighborhoods_with_serializer
+        # faster return than above render json, less intuitive data structure
+        render json: NeighborhoodSerializer.new(all_queried_neighborhoods).serializable_hash.to_json
     end
 end
