@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   get 'neighborhoods/details', to: 'neighborhoods#details'
   # ~~ USER LOGIN/SIGNUP ~~ #
   post '/signup', to: 'users#create'
-  post '/login', to: 'users#login'
+  get '/login', to: 'users#login'
 
 end
