@@ -6,16 +6,17 @@ require 'watir'
 integers = {'0': true, '1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9':true }
 
 # Empty DB - comment out if adding multiple pages to DB!
-Image.destroy_all
-Apartment.destroy_all
-Neighborhood.destroy_all
+# Image.destroy_all
+# Apartment.destroy_all
+# Neighborhood.destroy_all
 
 # Use nokogiri to scrape links to listing SHOW pages (~120 links per page)
-doc = Nokogiri::HTML(open('https://sfbay.craigslist.org/search/sfc/apa?hasPic=1&bundleDuplicates=1&availabilityMode=0&sale_date=all+dates'))
+doc = Nokogiri::HTML(open('https://sfbay.craigslist.org/d/apartments-housing-for-rent/search/sfc/apa?s=600&availabilityMode=0&bundleDuplicates=1&hasPic=1'))
 listitems = doc.css('li.result-row')
 ri = listitems.css('.result-image')
 arr = ri.css('a')
 links = arr.map { |item| item['href'] }
+
 # open browser instance
 browser = Watir::Browser.new(:chrome)
 # Iterate over each link: visit the page and scrape data to DB
@@ -25,9 +26,16 @@ links.each_with_index do |link, i|
     # log page once it has been navigated to (for debugging)
     puts i
     # skip iteration if there are no image thumbs -> only want listings with images
-    next if !browser.a(class: 'thumb').exists?
-    # find and click each thumb on the page
-    # This assures we can access all image URLS for scraping!
+    unless browser.a(class: 'thumb').exists?
+        puts 'SKIP - no images'
+        next
+    end
+    # skip iteration if no neighborhood listed for apt
+    unless browser.small.exists?
+        puts 'SKIP - no neighborhood'
+        next
+    end
+
     browser.as(class: 'thumb').each { |th| th.click }
     # get HTML from page after all clicks
     # Begin scraping data!
@@ -40,9 +48,12 @@ links.each_with_index do |link, i|
     else
         sq_feet = nil
     end
+    
     # Find remaining variables
     price = current_doc.css('span.price').text.sub('$', '').sub(',', '').to_i
-    neighborhood = current_doc.at_css('small').text.strip[1, neighborhood.length - 2]
+    neighborhood = current_doc.at_css('small').text.strip
+    neighborhood = neighborhood[1, neighborhood.length - 2]
+    puts neighborhood
     bed = current_doc.css('span.shared-line-bubble').children[0].text[0].to_i
     bath = current_doc.css('span.shared-line-bubble').children[2].text[0].to_i
     title = current_doc.css('span#titletextonly').text
