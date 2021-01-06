@@ -1,17 +1,26 @@
 class NeighborhoodsController < ApplicationController
 
     def index
-        render_neighborhoods
+        render_neighborhoods(all_queried_neighborhoods)
     end
 
     def details
         render_all_neighborhoods_details
     end
 
+    def sample
+        # byebug
+        render_neighborhoods(sample_neighborhoods)
+    end
+
     private
 
     def all_neighborhoods
         Neighborhood.all
+    end
+
+    def sample_neighborhoods
+        Neighborhood.all[0..2]
     end
 
     def get_ids_from_params
@@ -31,9 +40,9 @@ class NeighborhoodsController < ApplicationController
         render json: all_neighborhoods, except: [:created_at, :updated_at]
     end
 
-    def render_neighborhoods
+    def render_neighborhoods(neighborhoods)
         # intuitive data structure, slower load time than serialized json
-        render json: all_queried_neighborhoods, 
+        render json: neighborhoods, 
             except: [:created_at, :updated_at],
             include: { 
                 apartments: {
